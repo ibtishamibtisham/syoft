@@ -1,0 +1,11 @@
+.App {
+  text-align: center;
+}
+
+
+input{
+  height:50px;
+  width:90%;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}

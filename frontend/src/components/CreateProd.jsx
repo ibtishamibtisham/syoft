@@ -1,23 +1,30 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-export default function Invetory() {
+export default function () {
   const [data, setData] = useState({
-    name: "",
-    count: "",
+    productname: "",
+    productprice: "",
+    productdescription: "",
+    inventorycount: "",
+    token: "",
   });
   const creatProducts = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
+
   const ProductData = (e) => {
     let token = window.sessionStorage.getItem("token");
     e.preventDefault();
     axios
-      .put(
-        "http://localhost:5001/updateinventory",
+      .post(
+        "http://localhost:5001/createproducts",
         {
-          name: data.name,
-          count: data.count,
+          productname: data.productname,
+          productprice: data.productprice,
+          productdescription: data.productdescription,
+          inventorycount: data.inventorycount,
+          token,
         },
         {
           headers: {
@@ -32,7 +39,6 @@ export default function Invetory() {
         console.log(err);
       });
   };
-
   return (
     <div
       style={{
@@ -50,21 +56,38 @@ export default function Invetory() {
         <input
           type="text"
           placeholder="productname..."
-          name="name"
-          value={data.name}
+          name="productname"
+          value={data.productname}
           onChange={creatProducts}
         />
         <br />
         <input
           type="number"
           placeholder="productprice"
-          name="count"
-          value={data.count}
+          name="productprice"
+          value={data.productprice}
+          onChange={creatProducts}
+        />
+        <br />
+        <input
+          type="text"
+          placeholder="productdescription"
+          name="productdescription"
+          value={data.productdescription}
+          onChange={creatProducts}
+        />
+        <br />
+        <input
+          type="text"
+          placeholder="inventorycount"
+          name="inventorycount"
+          value={data.inventorycount}
           onChange={creatProducts}
         />
         <br />
         <input type="submit" />
       </form>
+      ;
     </div>
   );
 }

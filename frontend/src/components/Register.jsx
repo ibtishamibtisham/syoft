@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 export default function Register() {
   const [data, setData] = useState({
@@ -8,6 +9,7 @@ export default function Register() {
     password: "",
     role: "",
   });
+  const navigate = useNavigate();
   const RegisterUsers = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
@@ -15,7 +17,7 @@ export default function Register() {
   const PostRegisterData = (e) => {
     e.preventDefault();
     axios
-      .post("https://yousoft.herokuapp.com/signup", {
+      .post("http://localhost:5001/signup", {
         name: data.name,
         phone: data.phone,
         email: data.email,
@@ -23,7 +25,8 @@ export default function Register() {
         role: data.role,
       })
       .then((res) => {
-        console.log(res, "posted");
+        console.log(res);
+        navigate("/login");
       })
       .catch((err) => {
         console.log(err);
@@ -84,8 +87,10 @@ export default function Register() {
           value={data.role}
         />
         <br />
+
         <input type="submit" />
       </form>
+      <Link to="/login">Login here</Link>
     </div>
   );
 }

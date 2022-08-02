@@ -1,93 +1,97 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
+import CreateProd from "./CreateProd";
+import Invetory from "./Invetory";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Products() {
-  const [data, setData] = useState({
-    productname: "",
-    productprice: "",
-    productdescription: "",
-    inventorycount: "",
-    token: "",
-  });
-  const creatProducts = (e) => {
-    setData({ ...data, [e.target.name]: e.target.value });
-  };
-
-  const ProductData = (e) => {
+  const [status, setStatus] = useState(false);
+  const [show, setShow] = useState([]);
+  let [state, setState] = useState(false);
+  let [state1, setState1] = useState(false);
+  let [role, setRole] = useState("");
+  const navigate = useNavigate();
+  const shoData = () => {
+    setRole(window.sessionStorage.getItem("role"));
     let token = window.sessionStorage.getItem("token");
-    e.preventDefault();
+
     axios
-      .post(
-        "http://localhost:5001/createproducts",
-        {
-          productname: data.productname,
-          productprice: data.productprice,
-          productdescription: data.productdescription,
-          inventorycount: data.inventorycount,
-          token,
+      .get("http://localhost:5001/getallproducts", {
+        headers: {
+          Authorization: "Bearer " + token,
         },
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      )
+      })
       .then((res) => {
-        console.log(res);
+        setShow(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
   };
+  useEffect(() => {
+    shoData();
+  }, []);
 
   return (
-    <div
-      style={{
-        width: "600px",
-        height: "400px",
-        margin: "auto",
-        border: "1px solid black",
-      }}
-    >
-      <form
-        onSubmit={(e) => {
-          ProductData(e);
-        }}
-      >
-        <input
-          type="text"
-          placeholder="productname..."
-          name="productname"
-          value={data.productname}
-          onChange={creatProducts}
-        />
-        <br />
-        <input
-          type="number"
-          placeholder="productprice"
-          name="productprice"
-          value={data.productprice}
-          onChange={creatProducts}
-        />
-        <br />
-        <input
-          type="text"
-          placeholder="productdescription"
-          name="productdescription"
-          value={data.productdescription}
-          onChange={creatProducts}
-        />
-        <br />
-        <input
-          type="text"
-          placeholder="inventorycount"
-          name="inventorycount"
-          value={data.inventorycount}
-          onChange={creatProducts}
-        />
-        <br />
-        <input type="submit" />
-      </form>
+    <div>
+      <h1>Welcome to product page</h1>
+      <button>Logout</button>
+      <div>
+        {role == "admin" ? (
+          <>
+            <button
+              onClick={() => {
+                setState(!state);
+              }}
+            >
+              createproduct
+            </button>
+            <button
+              onClick={() => {
+                setState(!state);
+              }}
+            >
+              update inventory
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={() => {
+              setState(!state);
+            }}
+          >
+            update inventory
+          </button>
+        )}
+        <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+          <div>{state == false ? <CreateProd /> : <Invetory />}</div>
+          <div>
+            {show.map((item) => {
+              return (
+                <div
+                  style={{
+                    width: "300px",
+                    height: "200px",
+                    border: "1px solid black",
+                    margin: "auto",
+                  }}
+                >
+                  <h2>name:{item.productname}</h2>
+                  <p>
+                    price:<strong>{item.productprice}</strong>
+                  </p>
+                  <p>
+                    description:<strong>{item.productdescription}</strong>
+                  </p>
+                  <p>
+                    count of inventory:<strong>{item.inventorycount}</strong>
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

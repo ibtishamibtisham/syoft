@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-
+import { Link, useNavigate } from "react-router-dom";
 export default function Login() {
+  const navigate = useNavigate();
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -18,8 +19,14 @@ export default function Login() {
         password: data.password,
       })
       .then((res) => {
-        // console.log(res.data.token);
+        if (res.data.user.role == "admin" || res.data.user.role == "manager") {
+          navigate("/products");
+        } else {
+          navigate("/staff");
+        }
+
         sessionStorage.setItem("token", res.data.token);
+        sessionStorage.setItem("role", res.data.user.role);
       })
       .catch((err) => {
         console.log(err);
@@ -30,7 +37,7 @@ export default function Login() {
     <div
       style={{
         width: "600px",
-        height: "400px",
+        height: "200px",
         margin: "auto",
         border: "1px solid black",
       }}
@@ -59,6 +66,7 @@ export default function Login() {
         <br />
         <input type="submit" />
       </form>
+      <Link to="/signup">signup here</Link>
     </div>
   );
 }

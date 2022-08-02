@@ -1,14 +1,12 @@
 // const loginModel = require("../models/signup.models");
 const express = require("express");
 const mongoose = require("mongoose");
-const obj = require("mongodb").ObjectId;
 var jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
-// const homemodel = require("../models/home.model");
+
 app = express();
 const signupModel = require("../models/signup.model");
-// const homeModel = require("../models/home.model");
 const productsModel = require("../models/product.model");
 require("dotenv").config();
 const router = express.Router();
@@ -51,7 +49,6 @@ router.post("/signup", async (req, res) => {
 });
 const verifyToken = (req, res, next) => {
   const token = req.header("Authorization");
-  console.log(token, "inside midddleware");
   const bearertoken = token.split(" ")[1];
   jwt.verify(bearertoken, process.env.JWT_ACCESS_KEY, (err, user) => {
     if (err) return res.status(403).send("not applicable");
@@ -76,6 +73,10 @@ router.post("/createproducts", verifyToken, async (req, res) => {
     return res.send({ message: "only admin can add the products" });
   }
 });
+router.get("/prod", async (req, res) => {
+  let mydata = await productsModel.find().lean().exec();
+  return res.send(mydata);
+});
 router.get("/getallproducts", verifyToken, async (req, res) => {
   if (req.user.user.role !== "staff") {
     let mydata = await productsModel.find().lean().exec();
@@ -86,8 +87,21 @@ router.get("/getallproducts", verifyToken, async (req, res) => {
 });
 router.put("/updateinventory", verifyToken, async (req, res) => {
   if (req.user.user.role !== "staff") {
-    let mydata = await productsModel.find().lean().exec();
-    return res.send(mydata);
+    let mydata = await productsModel.findOne({ productname: req.body.name });
+    if (!mydata) {
+      return res.send({
+        message: "product needs to be craeted first",
+      });
+    } else {
+      mydata = await productsModel.findOneAndUpdate(
+        {
+          productname: req.body.name,
+        },
+        { $set: { inventorycount: req.body.count } },
+        { new: true }
+      );
+      return res.send(mydata);
+    }
   } else {
     return res.send({ message: "no access for staffs" });
   }

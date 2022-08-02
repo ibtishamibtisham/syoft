@@ -15,7 +15,7 @@ export default function Register() {
   const PostRegisterData = (e) => {
     e.preventDefault();
     axios
-      .post("http://localhost:5001/signup", {
+      .post("https://yousoft.herokuapp.com/signup", {
         name: data.name,
         phone: data.phone,
         email: data.email,
@@ -23,7 +23,7 @@ export default function Register() {
         role: data.role,
       })
       .then((res) => {
-        console.log(res);
+        console.log(res, "posted");
       })
       .catch((err) => {
         console.log(err);

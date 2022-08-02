@@ -24,7 +24,7 @@ export default function Products() {
           productprice: data.productprice,
           productdescription: data.productdescription,
           inventorycount: data.inventorycount,
-          token: token,
+          token,
         },
         {
           headers: {
@@ -58,7 +58,7 @@ export default function Products() {
           type="text"
           placeholder="productname..."
           name="productname"
-          value={data.productnamee}
+          value={data.productname}
           onChange={creatProducts}
         />
         <br />

@@ -3,7 +3,7 @@ const productSchema = mongoose.Schema({
   productname: { type: String, required: true },
   productprice: { type: Number, required: true },
   productdescription: { type: String, required: true },
-  inventorycount: { type: Number, default: 1 },
+  inventorycount: { type: String, required: true },
   token: { type: String, required: true },
 });
 
